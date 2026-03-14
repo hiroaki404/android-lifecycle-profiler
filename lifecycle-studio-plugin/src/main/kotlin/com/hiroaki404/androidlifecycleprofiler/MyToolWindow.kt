@@ -21,7 +21,7 @@ class MyToolWindowFactory : ToolWindowFactory {
     override fun shouldBeAvailable(project: Project) = true
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        toolWindow.addComposeTab("My Tool Window", focusOnClickInside = true) {
+        toolWindow.addComposeTab("My Tool Window") {
             LaunchedEffect(Unit) {
                 // initial data loading
             }
