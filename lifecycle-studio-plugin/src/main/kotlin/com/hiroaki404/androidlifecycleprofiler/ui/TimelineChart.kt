@@ -2,19 +2,9 @@ package com.hiroaki404.androidlifecycleprofiler.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -27,17 +17,33 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hiroaki404.androidlifecycleprofiler.model.LifecycleSpan
+import kotlinx.coroutines.delay
 import org.jetbrains.jewel.ui.component.Text
 
 private const val ROW_HEIGHT = 48f
 private const val LABEL_WIDTH = 160
 private const val PADDING = 4f
-private const val WINDOW_MS = 30_000L  // 表示する時間幅 (30秒)
+private const val WINDOW_MS = 10_000L  // 表示する時間幅 (10秒)
 
 @Composable
 fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
     val components = remember(spans) { spans.map { it.component }.distinct() }
-    val now = System.currentTimeMillis()
+
+    // 100msごとにnowを更新することで、アクティブなスパンがリアルタイムに伸びる
+    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(200)
+            now = System.currentTimeMillis()
+        }
+    }
+
+    LaunchedEffect(spans.size) {
+        spans.forEachIndexed { index, span ->
+            println("${now} [${span.component}]")
+        }
+    }
+
     val windowStart = now - WINDOW_MS
 
     if (components.isEmpty()) {
@@ -56,7 +62,7 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
                 .width(LABEL_WIDTH.dp)
                 .fillMaxHeight()
                 .background(Color(0xFF2B2B2B))
-                .padding(top = 24.dp)
+                .padding(top = 24.dp),
         ) {
             components.forEach { component ->
                 Box(
@@ -64,7 +70,7 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
                         .height(ROW_HEIGHT.dp)
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp),
-                    contentAlignment = Alignment.CenterStart
+                    contentAlignment = Alignment.CenterStart,
                 ) {
                     Text(
                         text = component,
@@ -78,15 +84,13 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
         val textMeasurer = rememberTextMeasurer()
         Canvas(
             Modifier
-                .fillMaxSize()
-                .horizontalScroll(scrollState)
+                .fillMaxSize(),
         ) {
             val canvasWidth = size.width
             val canvasHeight = size.height
 
-            // 時間軸目盛り（5秒ごと）
-            val tickIntervalMs = 5_000L
-            val tickIntervalPx = canvasWidth * tickIntervalMs / WINDOW_MS
+            // 時間軸目盛り（2秒ごと）
+            val tickIntervalMs = 10_000L
             var tickTime = (windowStart / tickIntervalMs + 1) * tickIntervalMs
             while (tickTime <= now) {
                 val x = ((tickTime - windowStart).toFloat() / WINDOW_MS * canvasWidth)
@@ -113,8 +117,10 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
                 spans
                     .filter { it.component == component && (it.endTime ?: now) >= windowStart }
                     .forEach { span ->
-                        val xStart = ((span.startTime - windowStart).coerceAtLeast(0).toFloat() / WINDOW_MS * canvasWidth)
-                        val xEnd = (((span.endTime ?: now) - windowStart).coerceAtMost(WINDOW_MS).toFloat() / WINDOW_MS * canvasWidth)
+                        val xStart =
+                            ((span.startTime - windowStart).coerceAtLeast(0).toFloat() / WINDOW_MS * canvasWidth)
+                        val xEnd = (((span.endTime ?: now) - windowStart).coerceAtMost(WINDOW_MS)
+                            .toFloat() / WINDOW_MS * canvasWidth)
                         val width = (xEnd - xStart).coerceAtLeast(4f)
 
                         drawRoundRect(
