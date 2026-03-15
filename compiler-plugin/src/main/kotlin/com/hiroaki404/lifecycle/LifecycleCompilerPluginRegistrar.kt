@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 @OptIn(ExperimentalCompilerApi::class)
 class LifecycleCompilerPluginRegistrar : CompilerPluginRegistrar() {
     override val supportsK2: Boolean = true
+    override val pluginId: String = "com.hiroaki404.lifecycle"
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         IrGenerationExtension.registerExtension(LifecycleIrGenerationExtension())

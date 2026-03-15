@@ -1,29 +1,20 @@
 package com.hiroaki404.lifecycle
 
+import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
-import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
-import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
-class LifecycleGradlePlugin : KotlinCompilerPluginSupportPlugin {
+class LifecycleGradlePlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        target.dependencies.add(
-            "implementation",
-            "com.hiroaki404:lifecycle-annotations:0.1.0"
-        )
+        target.dependencies.add("implementation", "com.hiroaki404:lifecycle-annotations:0.1.0")
+
+        val pluginConf = target.configurations.create("lifecycleCompilerPluginClasspath") {
+            it.isTransitive = false
+        }
+        target.dependencies.add(pluginConf.name, "com.hiroaki404:lifecycle-compiler-plugin:0.1.0")
+
+        target.tasks.withType(AbstractKotlinCompile::class.java).configureEach { task ->
+            task.pluginClasspath.from(pluginConf)
+        }
     }
-
-    override fun getPluginArtifact() = SubpluginArtifact(
-        groupId = "com.hiroaki404",
-        artifactId = "lifecycle-compiler-plugin",
-        version = "0.1.0"
-    )
-
-    override fun getCompilerPluginId() = "com.hiroaki404.lifecycle"
-
-    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) = true
-
-    override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>) =
-        kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
 }

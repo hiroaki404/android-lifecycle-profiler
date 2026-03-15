@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.1.20"
+    kotlin("jvm") version "2.3.0"
     `java-gradle-plugin`
 }
 
@@ -12,7 +12,7 @@ tasks.withType<ProcessResources> {
 }
 
 dependencies {
-    implementation(libs.kotlinGradlePlugin)
+    compileOnly(libs.kotlinGradlePlugin)
 }
 
 gradlePlugin {
