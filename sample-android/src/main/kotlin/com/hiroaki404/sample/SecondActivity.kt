@@ -1,25 +1,13 @@
 package com.hiroaki404.sample
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.hiroaki404.lifecycle.LogLifecycle
 
 @LogLifecycle
-class MainActivity : AppCompatActivity() {
-    private val viewModel: MainViewModel by viewModels()
-
+class SecondActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val button = Button(this).apply {
-            text = "Go to Second Activity"
-            setOnClickListener {
-                startActivity(Intent(this@MainActivity, SecondActivity::class.java))
-            }
-        }
-        setContentView(button)
     }
 
     override fun onStart() {

@@ -29,7 +29,8 @@ class LifecycleIrTransformer(
 
     private val lifecycleMethods = setOf(
         "onCreate", "onStart", "onResume",
-        "onPause", "onStop", "onDestroy"
+        "onPause", "onStop", "onDestroy",
+        "onCleared"
     )
 
     // android.util.Log.d(String, String) を referenceClass 経由で解決
