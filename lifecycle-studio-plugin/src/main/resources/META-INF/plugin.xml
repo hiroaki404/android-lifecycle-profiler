@@ -26,9 +26,11 @@
     <!-- Extensions defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Lifecycle Profiler" factoryClass="com.hiroaki404.androidlifecycleprofiler.MyToolWindowFactory"
+        <toolWindow id="Lifecycle Profiler"
+                    factoryClass="com.hiroaki404.androidlifecycleprofiler.ui.LifecycleToolWindowFactory"
                     anchor="bottom"
                     icon="AllIcons.Toolwindows.ToolWindowPalette"/>
+        <projectService serviceImplementation="com.hiroaki404.androidlifecycleprofiler.store.LifecycleStore"/>
     </extensions>
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <supportsKotlinPluginMode supportsK1="true" supportsK2="true"/>

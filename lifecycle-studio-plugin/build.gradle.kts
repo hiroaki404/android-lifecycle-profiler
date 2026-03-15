@@ -26,6 +26,9 @@ dependencies {
         bundledPlugin("org.jetbrains.kotlin")
         bundledPlugin("org.jetbrains.android")
     }
+
+    // kotlinx-coroutines is provided by the IntelliJ Platform; do NOT bundle it
+    compileOnly(libs.kotlinxCoroutines)
 }
 
 intellijPlatform {
