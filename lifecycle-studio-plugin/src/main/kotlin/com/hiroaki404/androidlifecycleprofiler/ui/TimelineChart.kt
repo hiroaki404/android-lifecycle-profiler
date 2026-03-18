@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hiroaki404.androidlifecycleprofiler.model.LifecycleSpan
@@ -88,8 +89,11 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
         ) {
             val canvasWidth = size.width
             val canvasHeight = size.height
+            val rowHeightPx = ROW_HEIGHT.dp.toPx()
+            val headerHeightPx = 24.dp.toPx()
+            val paddingPx = PADDING.dp.toPx()
 
-            // 時間軸目盛り（2秒ごと）
+            // 時間軸目盛り（10秒ごと）
             val tickIntervalMs = 10_000L
             var tickTime = (windowStart / tickIntervalMs + 1) * tickIntervalMs
             while (tickTime <= now) {
@@ -112,7 +116,7 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
 
             // スパン描画
             components.forEachIndexed { index, component ->
-                val rowTop = 24f + index * ROW_HEIGHT + PADDING
+                val rowTop = headerHeightPx + index * rowHeightPx + paddingPx
 
                 spans
                     .filter { it.component == component && (it.endTime ?: now) >= windowStart }
@@ -126,16 +130,20 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
                         drawRoundRect(
                             color = span.state.color,
                             topLeft = Offset(xStart, rowTop),
-                            size = Size(width, ROW_HEIGHT - PADDING * 2),
+                            size = Size(width, rowHeightPx - paddingPx * 2),
                             cornerRadius = CornerRadius(4f),
                         )
 
-                        if (width > 40f) {
+                        val textAreaWidth = (width - paddingPx * 2).coerceAtLeast(0f)
+                        if (textAreaWidth > 0f) {
                             drawText(
                                 textMeasurer = textMeasurer,
                                 text = span.state.label,
-                                topLeft = Offset(xStart + 4f, rowTop + 4f),
+                                topLeft = Offset(xStart + paddingPx, rowTop + paddingPx),
                                 style = TextStyle(fontSize = 10.sp, color = Color.White),
+                                size = Size(textAreaWidth, rowHeightPx - paddingPx * 2),
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
                             )
                         }
                     }
