@@ -39,6 +39,8 @@ dependencies {
     implementation(compose.runtime)
     implementation(compose.ui)
     implementation(compose.foundation)
+    // Jewel standalone for preview host process (IDE provides jewel-ide-laf-bridge at runtime)
+    runtimeOnly("org.jetbrains.jewel:jewel-int-ui-standalone:0.32.1-253.28294.285")
 }
 
 intellijPlatform {

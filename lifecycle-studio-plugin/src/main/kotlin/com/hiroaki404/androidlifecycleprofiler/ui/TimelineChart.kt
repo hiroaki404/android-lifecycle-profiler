@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import com.hiroaki404.androidlifecycleprofiler.model.LifecycleSpan
 import com.hiroaki404.androidlifecycleprofiler.model.LifecycleState
-import androidx.compose.foundation.text.BasicText
 import kotlinx.coroutines.delay
+import org.jetbrains.jewel.ui.component.Text
 
 private val previewSpans: List<LifecycleSpan>
     get() {
@@ -64,10 +64,7 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
 
     if (components.isEmpty()) {
         Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            BasicText(
-                text = "ライフサイクルイベント待機中...",
-                style = TextStyle(color = Color.White),
-            )
+            Text("ライフサイクルイベント待機中...")
         }
         return
     }
@@ -91,7 +88,7 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
                         .padding(horizontal = 8.dp),
                     contentAlignment = Alignment.CenterStart,
                 ) {
-                    BasicText(
+                    Text(
                         text = component,
                         style = TextStyle(fontSize = 12.sp, color = Color.White),
                     )
