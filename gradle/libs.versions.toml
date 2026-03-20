@@ -3,12 +3,14 @@ kotlin = "2.3.0"
 androidGradlePlugin = "8.3.2"
 intellijPlatform = "2.10.2"
 kotlinxCoroutines = "1.10.2"
+composeMultiplatform = "1.9.0"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinCompilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
 kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 androidGradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
+composeUiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview-desktop", version.ref = "composeMultiplatform" }
 
 [plugins]
 intellijPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intellijPlatform" }

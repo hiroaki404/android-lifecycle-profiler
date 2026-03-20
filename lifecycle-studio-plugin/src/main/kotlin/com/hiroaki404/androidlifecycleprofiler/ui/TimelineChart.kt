@@ -17,9 +17,24 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import com.hiroaki404.androidlifecycleprofiler.model.LifecycleSpan
+import com.hiroaki404.androidlifecycleprofiler.model.LifecycleState
+import androidx.compose.foundation.text.BasicText
 import kotlinx.coroutines.delay
-import org.jetbrains.jewel.ui.component.Text
+
+private val previewSpans: List<LifecycleSpan>
+    get() {
+        val now = System.currentTimeMillis()
+        return listOf(
+            LifecycleSpan("MainActivity", LifecycleState.CREATED, now - 9000, now - 8000),
+            LifecycleSpan("MainActivity", LifecycleState.STARTED, now - 8000, now - 7000),
+            LifecycleSpan("MainActivity", LifecycleState.RESUMED, now - 7000, null),
+            LifecycleSpan("SecondActivity", LifecycleState.CREATED, now - 5000, now - 4000),
+            LifecycleSpan("SecondActivity", LifecycleState.STARTED, now - 4000, now - 3000),
+            LifecycleSpan("SecondActivity", LifecycleState.RESUMED, now - 3000, null),
+        )
+    }
 
 private const val ROW_HEIGHT = 48f
 private const val LABEL_WIDTH = 160
@@ -49,7 +64,10 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
 
     if (components.isEmpty()) {
         Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("ライフサイクルイベント待機中...")
+            BasicText(
+                text = "ライフサイクルイベント待機中...",
+                style = TextStyle(color = Color.White),
+            )
         }
         return
     }
@@ -73,7 +91,7 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
                         .padding(horizontal = 8.dp),
                     contentAlignment = Alignment.CenterStart,
                 ) {
-                    Text(
+                    BasicText(
                         text = component,
                         style = TextStyle(fontSize = 12.sp, color = Color.White),
                     )
@@ -150,4 +168,13 @@ fun TimelineChart(spans: List<LifecycleSpan>, modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun TimelineChartPreview() {
+    TimelineChart(
+        spans = previewSpans,
+        modifier = Modifier.fillMaxSize(),
+    )
 }
