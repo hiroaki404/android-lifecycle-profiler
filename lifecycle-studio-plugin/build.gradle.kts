@@ -62,19 +62,31 @@ tasks {
         targetCompatibility = "21"
     }
 
-    // Compose runtime is provided by IntelliJ Platform; do not bundle it in the plugin zip
-    buildPlugin {
-        exclude { entry ->
+    // Compose/Jewel runtime is provided by IntelliJ Platform at runtime;
+    // exclude from sandbox (runIde) and plugin zip to avoid ClassLoader conflicts
+    val composeExcludes: org.gradle.api.specs.Spec<org.gradle.api.file.FileTreeElement> =
+        org.gradle.api.specs.Spec { entry ->
             val name = entry.name
             name.startsWith("skiko") ||
-            name.startsWith("compose-runtime") ||
-            name.startsWith("compose-foundation") ||
-            name.startsWith("compose-ui") ||
-            name.startsWith("compose-animation") ||
-            name.startsWith("compose-material") ||
-            name.startsWith("kotlinx-coroutines")
+            name.startsWith("compose-") ||
+            name.startsWith("jewel-") ||
+            name.startsWith("kotlinx-coroutines") ||
+            name.endsWith("-desktop.jar") ||
+            name.contains("-desktop-") ||
+            name.startsWith("animation-") ||
+            name.startsWith("runtime-") ||
+            name.startsWith("ui-") ||
+            name.startsWith("foundation-") ||
+            name.startsWith("savedstate-") ||
+            name.startsWith("lifecycle-runtime-") ||
+            name.startsWith("lifecycle-viewmodel-") ||
+            name.startsWith("lifecycle-common-") ||
+            name.startsWith("lifecycle-runtime-compose-") ||
+            name.startsWith("collection-jvm") ||
+            name.startsWith("annotation-jvm")
         }
-    }
+    prepareSandbox { exclude(composeExcludes) }
+    buildPlugin { exclude(composeExcludes) }
 }
 
 kotlin {
